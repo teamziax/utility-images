@@ -1,4 +1,4 @@
-name: Build and Push Docker Image
+name: Build and Push Docker Images
 
 on:
   push:
@@ -9,6 +9,14 @@ on:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        dockerfile:
+          - Dockerfile.dnsmasq
+          - Dockerfile.netshoot
+        name:
+          - dnsmasq
+          - netshoot
 
     steps:
       - name: Checkout Repository
@@ -28,6 +36,6 @@ jobs:
         uses: docker/build-push-action@v5
         with:
           context: .
-          file: ./Dockerfile
+          file: ./${{ matrix.dockerfile }}
           push: true
-          tags: ghcr.io/${{ github.repository }}/dnsmasq:latest
+          tags: ghcr.io/${{ github.repository }}/${{ matrix.name }}:latest
