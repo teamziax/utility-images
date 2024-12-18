@@ -1,0 +1,22 @@
+FROM debian:stable-slim
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    git autoconf automake libtool pkg-config \
+    build-essential gcc binutils m4 make perl bison flex \
+    libncurses5-dev libreadline-dev libssh-dev \
+    ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
+
+WORKDIR /tmp
+RUN git clone https://gitlab.nic.cz/labs/bird.git && \
+    cd bird && \
+    git checkout v3.0.0 && \
+    autoreconf -fi && \
+    ./configure --prefix=/usr --sysconfdir=/etc --runstatedir=/run && \
+    make && \
+    make install
+
+RUN mkdir -p /etc /run
+
+CMD ["bird","-c","/etc/bird.conf"]
