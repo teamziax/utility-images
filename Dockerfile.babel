@@ -1,0 +1,17 @@
+FROM docker.io/debian:latest AS builder
+
+RUN apt update && \
+    apt install -y wget build-essential
+
+WORKDIR /build
+RUN wget https://www.irif.fr/~jch/software/files/babeld-1.13.1.tar.gz && \
+    tar xvfz babeld-1.13.1.tar.gz && \
+    cd babeld-1.13.1 && \
+    make
+
+FROM docker.io/debian:latest
+
+COPY --from=builder /build/babeld-1.13.1 /babeld
+RUN ln -s /babeld/babeld /usr/local/bin/babeld
+
+ENTRYPOINT ["/usr/local/bin/babeld"]
