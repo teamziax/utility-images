@@ -15,6 +15,7 @@ jobs:
           - dnsmasq
           - netshoot
           - envsubst
+          - babel
 
     steps:
       - name: Checkout Repository
